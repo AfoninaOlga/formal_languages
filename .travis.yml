@@ -12,6 +12,7 @@ install:
   - conda config --set channel_priority strict
   - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION pygraphblas pytest
   - conda activate test-env
+  - pip install -r requirements.txt
 
 script:
   - pytest
