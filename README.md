@@ -1,6 +1,6 @@
 # SPBU Formal Languages Course
 
-##Required libriries:
+## Required libriries:
 - [pyformlang](https://pypi.org/project/pyformlang/)
 - [pygraphblas](https://github.com/michelp/pygraphblas)
 
@@ -15,4 +15,5 @@ Tests can be run by ```pytest```
 Simple tests for graph intersection using tensor product.
 
 ### Run
-Tests can be run by ```python -m pytest```
+- Tests can be run by ```python -m pytest```
+- To get intersection of two graphs read from files run ```python src\main.py [path to file with adges] [path to file with regex]```, where the first file consists of triples of the form: ```"{vertex number} {label} {vertex number}"``` and the secondone contains a ```regular expression``` (see examples in data folder).
