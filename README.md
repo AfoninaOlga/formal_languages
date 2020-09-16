@@ -11,7 +11,7 @@ Simple matrix multiplication test using ```pygraphblas``` and automata intersect
 ### Run
 Tests can be run by ```pytest```
 
-## Assignment 2
+## Assignment 2 [![Build Status](https://travis-ci.com/AfoninaOlga/formal_languages.svg?branch=assignment_2)](https://travis-ci.com/AfoninaOlga/formal_languages)
 Simple tests for graph intersection using tensor product.
 
 ### Run
