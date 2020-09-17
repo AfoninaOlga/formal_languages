@@ -85,7 +85,7 @@ class Graph:
         return res
 
     def reachable_from(self, from_vertices):
-        res = sels.transitive_closure()
+        res = self.transitive_closure()
 
         for v in range (self.size):
             if v not in from_vertices:
