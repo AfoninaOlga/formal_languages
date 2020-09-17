@@ -4,6 +4,31 @@ from pygraphblas import *
 from src.graph import Graph
 
 
+def test_reachable_from():
+    g = Graph()
+    g.read_from_txt("data/g3.txt")
+
+    expected = Matrix.sparse(BOOL, g.size, g.size)
+    for v in range(1, g.size):
+        expected[0, v] = True
+    for v in range(1, g.size):
+        expected.assign_row(v, Vector.sparse(BOOL, g.size).full(0))
+
+    assert g.reachable_from({0}).iseq(expected)
+
+def test_reachable_from_to():
+    g = Graph()
+    g.read_from_txt("data/g3.txt")
+
+    expected = Matrix.sparse(BOOL, g.size, g.size)
+    for v in range(2, g.size):
+        expected.assign_row(v, Vector.sparse(BOOL, g.size).full(0))
+    for v in range(1, g.size):
+        expected.assign_col(v, Vector.sparse(BOOL, g.size).full(0))
+
+    assert g.reachable_from_to({0, 1}, {0}).iseq(expected)
+
+
 def test_intersection():
     g1 = Graph()
     g2 = Graph()
