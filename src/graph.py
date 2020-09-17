@@ -1,4 +1,4 @@
-from pygraphblas import Matrix
+from pygraphblas import *
 from pygraphblas.types import BOOL
 from pyformlang.regular_expression import Regex
 
