@@ -94,7 +94,7 @@ class Graph:
         return res
 
     def reachable_from_to(self, from_vertices, to_vertices):
-        res = sels.transitive_closure()
+        res = self.transitive_closure()
 
         for v in range (self.size):
             if v not in from_vertices:
@@ -104,14 +104,3 @@ class Graph:
                 res.assign_col(v, Vector.sparse(BOOL, self.size).full(0))
 
         return res
-
-if __name__ == "__main__":
-    g1 = Graph()
-    g2 = Graph()
-
-    g1.read_from_txt("data/g3.txt")
-    g2.read_from_regex("data/r3.txt")
-
-    intersection = g1.intersect(g2)
-    for label in g2.labels_adj:
-        print(label, g2.labels_adj[label].nvals)
