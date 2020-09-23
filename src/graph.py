@@ -55,12 +55,29 @@ class Graph:
 
         self.start_states.add(state_number[dfa.start_state])
 
-    def transitive_closure(self):
+    def transitive_closure_mul(self):
+        res = Matrix.sparse(BOOL, self.size, self.size)
+        for label in self.labels_adj:
+            res |= self.labels_adj[label]
+        mtx = res.dup()
+        for _ in range(self.size):
+            tmp = res.nvals
+            with semiring.LOR_LAND_BOOL:
+                res += mtx @ res
+            if tmp == res.nvals:
+                break
+        return res
+
+    def transitive_closure_sq(self):
         res = Matrix.sparse(BOOL, self.size, self.size)
         for label in self.labels_adj:
             res |= self.labels_adj[label]
         for _ in range(self.size):
-            res += res @ res
+            tmp = res.nvals
+            with semiring.LOR_LAND_BOOL:
+                res += res @ res
+            if tmp == res.nvals:
+                break
         return res
 
     def intersect(self, other):
@@ -79,24 +96,25 @@ class Graph:
             for j in other.final_states:
                 res.final_states.add(i * self.size + j)
 
-        for label in res.labels_adj:
-            print(label, ": ", res.labels_adj[label].nvals)
-
         return res
 
-    def reachable_from(self, from_vertices):
-        res = self.transitive_closure()
+    def print_pairs(self):
+        for label in self.labels_adj:
+            print(label, ": ", self.labels_adj[label].nvals)
 
-        for v in range (self.size):
+    def reachable_from(self, from_vertices):
+        res = self.transitive_closure_sq()
+
+        for v in range(self.size):
             if v not in from_vertices:
                 res.assign_row(v, Vector.sparse(BOOL, self.size).full(0))
 
         return res
 
     def reachable_from_to(self, from_vertices, to_vertices):
-        res = self.transitive_closure()
+        res = self.transitive_closure_sq()
 
-        for v in range (self.size):
+        for v in range(self.size):
             if v not in from_vertices:
                 res.assign_row(v, Vector.sparse(BOOL, self.size).full(0))
 
