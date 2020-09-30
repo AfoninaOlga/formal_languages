@@ -18,7 +18,7 @@ Simple tests for graph intersection using tensor product.
 - Tests can be run by ```python -m pytest```
 - To get intersection of two graphs read from files run ```python src\main.py [path to file with adges] [path to file with regex]```, where the first file consists of triples of the form: ```"{vertex number} {label} {vertex number}"``` and the second one contains a ```regular expression``` (see examples in data folder).
 
-## Assignment 4 [![Build Status](https://travis-ci.com/AfoninaOlga/formal_languages.svg?branch=assignment_4)]
+## Assignment 4 [![Build Status](https://travis-ci.com/AfoninaOlga/formal_languages.svg?branch=assignment_4)](https://travis-ci.com/AfoninaOlga/formal_languages)
 Implementation of CYK and CFPQ algorithms.
 
 ### Run
