@@ -10,19 +10,11 @@ class Graph:
         self.final_states = set()
         self.size = 0
 
-    def __setitem__(self, key, value):
-        self.labels_adj[key] = value
-
-    def __getitem__(self, item):
-        if item not in self.labels_adj:
-            self.labels_adj[item] = Matrix.sparse(BOOL, self.size, self.size)
-        return self.labels_adj[item]
-
     def copy(self):
         res = Graph()
         res.size = self.size
-        for l in self.labels_adj:
-            res[l] = self[l].dup()
+        for label in self.labels_adj:
+            res.labels_adj[label] = self.labels_adj[label].dup()
         res.start_states = self.start_states.copy()
         res.final_states = self.final_states.copy()
         return res
@@ -44,7 +36,9 @@ class Graph:
         for edge in edges:
             v1, label, v2 = edge.split(' ')
             v1, v2 = int(v1), int(v2)
-            self[label][v1, v2] = True
+            if label not in self.labels_adj:
+                self.labels_adj[label] = Matrix.sparse(BOOL, size, size)
+            self.labels_adj[label][v1, v2] = True
             self.start_states.add(v1)
             self.final_states.add(v2)
 
@@ -63,7 +57,8 @@ class Graph:
             i += 1
 
         for v1, label, v2 in dfa._transition_function.get_edges():
-            self[label][state_number[v1], state_number[v2]] = True
+            self.labels_adj[label] = Matrix.sparse(BOOL, size, size)
+            self.labels_adj[label][state_number[v1], state_number[v2]] = True
 
         for st in dfa.final_states:
             self.final_states.add(state_number[st])
@@ -73,7 +68,7 @@ class Graph:
     def transitive_closure_mul(self):
         res = Matrix.sparse(BOOL, self.size, self.size)
         for label in self.labels_adj:
-            res += self[label]
+            res += self.labels_adj[label]
         mtx = res.dup()
         for _ in range(self.size):
             tmp = res.nvals
@@ -86,7 +81,7 @@ class Graph:
     def transitive_closure_sq(self):
         res = Matrix.sparse(BOOL, self.size, self.size)
         for label in self.labels_adj:
-            res += self[label]
+            res += self.labels_adj[label]
         for _ in range(self.size):
             tmp = res.nvals
             with semiring.LOR_LAND_BOOL:
@@ -99,9 +94,9 @@ class Graph:
         res = Graph()
         res.size = self.size * other.size
 
-        for label in self.labels_adj:
-            if label in other.labels_adj:
-                res[label] = self[label].kronecker(other[label])
+        for l in self.labels_adj:
+            if l in other.labels_adj:
+                res.labels_adj[l] = self.labels_adj[l].kronecker(other.labels_adj[l])
 
         for i in self.start_states:
             for j in other.start_states:
@@ -115,7 +110,7 @@ class Graph:
 
     def print_pairs(self):
         for label in self.labels_adj:
-            print(label, ": ", self[label].nvals)
+            print(label, ": ", self.labels_adj[label].nvals)
 
     def reachable_from(self, from_vertices):
         res = self.transitive_closure_sq()
