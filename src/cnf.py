@@ -4,12 +4,16 @@ from pygraphblas import Matrix, BOOL
 from src.graph import Graph
 
 
-def get_pairs(cfg: CFG):
-    res = []
+def get_pairs_and_units(cfg: CFG):
+    pairs = []
+    units = []
     for p in cfg.productions:
         if len(p.body) == 2:
-            res.append(p)
-    return res
+            pairs.append(p)
+        elif len(p.body) == 1:
+            units.append(p)
+    return pairs, units
+
 
 class AlgoCFG:
     def read_cnf(input_file):
@@ -32,8 +36,10 @@ class AlgoCFG:
         cfg = grammar.to_normal_form()
         mtx = [[set() for _ in range(n)] for _ in range(n)]
 
+        pairs, units = get_pairs_and_units(cfg)
+
         for i in range(n):
-            for prod in cfg.productions:
+            for prod in units:
                 if prod.body == [Terminal(word[i])]:
                     mtx[i][i].add(prod.head)
 
@@ -41,7 +47,7 @@ class AlgoCFG:
             for j in range(n - i):
                 for k in range(i):
                     l, r = mtx[j][j + k], mtx[j + k + 1][j + i]
-                    for prod in get_pairs(cfg):
+                    for prod in pairs:
                         if prod.body[0] in l and prod.body[1] in r:
                             mtx[j][j + i].add(prod.head)
 
@@ -64,9 +70,10 @@ class AlgoCFG:
             res[grammar.start_symbol] = mtx
 
         cfg = grammar.to_normal_form()
+        pairs, units = get_pairs_and_units(cfg)
 
         for t, mtx in graph.labels_adj.items():
-            for prod in cfg.productions:
+            for prod in units:
                 if prod.body == [Terminal(t)]:
                     res[prod.head] = mtx
 
@@ -80,7 +87,7 @@ class AlgoCFG:
 
             for new_var, mtx in res.items():
                 for new_st, _ in mtx[:, st]:
-                    for prod in get_pairs(cfg):
+                    for prod in pairs:
                         b = prod.body
                         h = prod.head
                         if (
@@ -93,7 +100,7 @@ class AlgoCFG:
 
             for new_var, mtx in res.items():
                 for new_end, _ in mtx[end, :]:
-                    for prod in get_pairs(cfg):
+                    for prod in pairs:
                         b = prod.body
                         h = prod.head
                         if (
