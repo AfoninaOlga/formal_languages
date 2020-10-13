@@ -4,6 +4,13 @@ from pygraphblas import Matrix, BOOL
 from src.graph import Graph
 
 
+def get_pairs(cfg: CFG):
+    res = []
+    for p in cfg.productions:
+        if len(p.body) == 2:
+            res.append(p)
+    return res
+
 class AlgoCFG:
     def read_cnf(input_file):
         with open(input_file, 'r') as f:
@@ -34,9 +41,8 @@ class AlgoCFG:
             for j in range(n - i):
                 for k in range(i):
                     l, r = mtx[j][j + k], mtx[j + k + 1][j + i]
-                    for prod in cfg.productions:
-                        if (len(prod.body) == 2 and prod.body[0] in l
-                                and prod.body[1] in r):
+                    for prod in get_pairs(cfg):
+                        if prod.body[0] in l and prod.body[1] in r:
                             mtx[j][j + i].add(prod.head)
 
         return cfg.start_symbol in mtx[0][n - 1]
@@ -74,26 +80,26 @@ class AlgoCFG:
 
             for new_var, mtx in res.items():
                 for new_st, _ in mtx[:, st]:
-                    for prod in cfg.productions:
+                    for prod in get_pairs(cfg):
                         b = prod.body
                         h = prod.head
                         if (
-                                len(b) == 2 and b[0] == new_var and b[1] == var
+                                list(b) == [new_var, var]
                                 and (h not in res
-                                     or res[h].get(new_st, end) is None)
+                                     or (new_st, end) not in res[h])
                         ):
                             m.append((h, new_st, end))
                             to_add.append((h, new_st, end))
 
             for new_var, mtx in res.items():
                 for new_end, _ in mtx[end, :]:
-                    for prod in cfg.productions:
+                    for prod in get_pairs(cfg):
                         b = prod.body
                         h = prod.head
                         if (
-                                len(b) == 2 and b[0] == var and b[1] == new_var
+                                list(b) == [var, new_var]
                                 and (h not in res
-                                     or res[h].get(st, new_end) is None)
+                                     or (st, new_end) not in res[h])
                         ):
                             m.append((h, st, new_end))
                             to_add.append((h, st, new_end))

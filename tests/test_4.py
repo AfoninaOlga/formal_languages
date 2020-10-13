@@ -41,6 +41,7 @@ def test_cfpq_empty():
     cnf = AlgoCFG.read_cnf("data/grammar.txt")
     assert not AlgoCFG.cfpq(cnf, graph)
 
+
 def test_cfpq_loops():
     graph = Graph()
     graph.read_from_txt("data/graph_loops.txt")
