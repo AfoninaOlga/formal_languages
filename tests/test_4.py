@@ -1,4 +1,3 @@
-from pygraphblas import *
 from src.graph import Graph
 from src.cnf import AlgoCFG
 
@@ -40,6 +39,7 @@ def test_cfpq_empty():
     graph.read_from_txt("data/graph.txt")
     cnf = AlgoCFG.read_cnf("data/grammar.txt")
     assert not AlgoCFG.cfpq(cnf, graph)
+
 
 def test_cfpq_loops():
     graph = Graph()

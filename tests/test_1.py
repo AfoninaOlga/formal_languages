@@ -1,6 +1,7 @@
 from pyformlang.finite_automaton import DeterministicFiniteAutomaton, State, Symbol
 from pygraphblas import Matrix
 
+
 def test_dfa_intersection():
     dfa1 = DeterministicFiniteAutomaton()
     dfa2 = DeterministicFiniteAutomaton()
@@ -24,6 +25,7 @@ def test_dfa_intersection():
     result = dfa1 & dfa2
 
     assert result.is_equivalent_to(dfa1), "Error in dfa intersection"
+
 
 def test_matrix_multiplication():
     mtx1 = Matrix.from_lists(

@@ -1,5 +1,3 @@
-import os, pytest
-from pyformlang.regular_expression import Regex
 from pygraphblas import *
 from src.graph import Graph
 
@@ -15,6 +13,7 @@ def test_reachable_from():
         expected.assign_row(v, Vector.sparse(BOOL, g.size).full(0))
 
     assert g.reachable_from({0}).iseq(expected)
+
 
 def test_reachable_from_to():
     g = Graph()
@@ -41,6 +40,7 @@ def test_intersection():
     assert intersection.labels_adj["a"].nvals == g1.labels_adj["a"].nvals
     assert intersection.labels_adj["b"].nvals == g1.labels_adj["b"].nvals
 
+
 def test_intersection_empty():
     g1 = Graph()
     g2 = Graph()
@@ -52,6 +52,7 @@ def test_intersection_empty():
 
     for l in intersection.labels_adj:
         assert intersection.labels_adj[l].nvals == 0
+
 
 def test_intersection_gt():
     g1 = Graph()

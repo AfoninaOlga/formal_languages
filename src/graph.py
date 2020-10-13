@@ -2,12 +2,22 @@ from pygraphblas import *
 from pygraphblas.types import BOOL
 from pyformlang.regular_expression import Regex
 
+
 class Graph:
     def __init__(self):
         self.labels_adj = dict()
         self.start_states = set()
         self.final_states = set()
         self.size = 0
+
+    def copy(self):
+        res = Graph()
+        res.size = self.size
+        for label in self.labels_adj:
+            res.labels_adj[label] = self.labels_adj[label].dup()
+        res.start_states = self.start_states.copy()
+        res.final_states = self.final_states.copy()
+        return res
 
     def read_from_txt(self, filename):
         input_file = open(filename)
@@ -58,12 +68,11 @@ class Graph:
     def transitive_closure_mul(self):
         res = Matrix.sparse(BOOL, self.size, self.size)
         for label in self.labels_adj:
-            res |= self.labels_adj[label]
+            res += self.labels_adj[label]
         mtx = res.dup()
         for _ in range(self.size):
             tmp = res.nvals
-            with semiring.LOR_LAND_BOOL:
-                res += mtx @ res
+            res += mtx @ res
             if tmp == res.nvals:
                 break
         return res
@@ -71,11 +80,10 @@ class Graph:
     def transitive_closure_sq(self):
         res = Matrix.sparse(BOOL, self.size, self.size)
         for label in self.labels_adj:
-            res |= self.labels_adj[label]
+            res += self.labels_adj[label]
         for _ in range(self.size):
             tmp = res.nvals
-            with semiring.LOR_LAND_BOOL:
-                res += res @ res
+            res += res @ res
             if tmp == res.nvals:
                 break
         return res
