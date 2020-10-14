@@ -136,9 +136,9 @@ class AlgoCFG:
             for p in units:
                 if Terminal(l) == p.body[0]:
                     if p.head in res:
-                        res[p.head] += mtx.dup()
+                        res[p.head] += mtx
                     else:
-                        res[p.head] = mtx.dup()
+                        res[p.head] = mtx
 
         changing = True
         while changing:
