@@ -10,6 +10,9 @@ class Graph:
         self.final_states = set()
         self.size = 0
 
+    def set(self, key, value):
+        self.labels_adj[key] = value
+
     def copy(self):
         res = Graph()
         res.size = self.size
