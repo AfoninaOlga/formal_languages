@@ -23,3 +23,9 @@ Implementation of CYK and CFPQ algorithms.
 
 ### Run
 Tests can be run by ```pytest```
+
+## Assignment 5 [![Build Status](https://travis-ci.com/AfoninaOlga/formal_languages.svg?branch=assignment_5)](https://travis-ci.com/AfoninaOlga/formal_languages)
+Implementation of CFPQ algorithms using matrix multiplication and tensor product.
+
+### Run
+Tests can be run by ```pytest```
