@@ -1,0 +1,20 @@
+S STMT ; S
+S
+STMT connect " STR "
+STMT select OBJ from GRAPH
+GRAPH  G intersect GRAPH
+GRAPH G
+G name " STR "
+G query PATTERN
+OBJ edges
+OBJ count edges
+PATTERN P
+PATTERN P alt PATTERN
+PATTERN P seq PATTERN
+P STR
+P P star
+P P plus
+P P opt
+CHAR a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z
+STR CHAR STR
+STR CHAR
