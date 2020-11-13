@@ -55,11 +55,11 @@ Strings consist of lowercase latin letters
 #### Script example:
 connect "database";
 
-select edges from name "graph" intersect a star seq cd plus alt word;
+select edges from name "graph" intersect query a star seq cd plus alt word;
 
 connect "otherdatabase";
 
-select count edges from name "g" intersect name "h" intersect a star seq b plus alt c opt;
+select count edges from name "g" intersect name "h" intersect query a star seq b plus alt c opt;
 
 More examples can be found in `tests/test_7.py`
 
