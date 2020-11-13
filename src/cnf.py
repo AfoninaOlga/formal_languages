@@ -117,3 +117,81 @@ class AlgoCFG:
                 res[var] = mtx
 
         return res.get(cfg.start_symbol)
+
+    def cfpq_mtx(grammar: CFG, graph: Graph):
+        n = graph.size
+        if not n:
+            return False
+
+        res = dict()
+        res[grammar.start_symbol] = Matrix.sparse(BOOL, n, n)
+
+        if grammar.generate_epsilon():
+            for i in range(n):
+                res[grammar.start_symbol][i, i] = True
+        cfg = grammar.to_normal_form()
+        pairs, units = get_pairs_and_units(cfg)
+
+        for l, mtx in graph.labels_adj.items():
+            for p in units:
+                if Terminal(l) == p.body[0]:
+                    if p.head in res:
+                        res[p.head] += mtx
+                    else:
+                        res[p.head] = mtx
+
+        changing = True
+        while changing:
+            changing = False
+            for p in pairs:
+                if p.body[0] in res and p.body[1] in res:
+                    if p.head not in res:
+                        res[p.head] = Matrix.sparse(BOOL, n, n)
+                    old = res[p.head].nvals
+                    res[p.head] += res[p.body[0]] @ res[p.body[1]]
+                    changing |= old != res[p.head].nvals
+        return res[cfg.start_symbol]
+
+    def to_rfa(cfg: CFG):
+        rfa = Graph()
+        rfa.size = sum(len(p.body) + 1 for p in cfg.productions)
+        prods_by_verts = {}
+        i = 0
+        for p in cfg.productions:
+            rfa.start_states.add(i)
+            prods_by_verts[i, i + len(p.body)] = p
+            for v in p.body:
+                rfa.set(v.value, Matrix.sparse(BOOL, rfa.size, rfa.size))
+                rfa.labels_adj[v.value][i, i + 1] = True
+                i += 1
+            rfa.final_states.add(i)
+            i += 1
+        return rfa, prods_by_verts
+
+    def cfpq_tensor(grammar: CFG, graph: Graph):
+        n = graph.size
+        if not n:
+            return False
+        rfa, prods_by_verts = AlgoCFG.to_rfa(grammar)
+        res = graph.copy()
+        for p in grammar.productions:
+            if not p.body:
+                res.set(p.head, Matrix.sparse(BOOL, n, n))
+                for i in range(n):
+                    res.labels_adj[p.head][i, i] = True
+        intersection = res.intersect(rfa)
+        n = intersection.size
+        tc = res.transitive_closure_sq()
+        changing = True
+        while changing:
+            prev = tc.nvals
+            for (i, j, _) in tc:
+                s, f = i % rfa.size, j % rfa.size
+                if s in rfa.start_states and f in rfa.final_states:
+                    s1, f1 = i // rfa.size, j // rfa.size
+                    res.labels_adj[prods_by_verts[s, f]][s1, f1] = True
+            intersection = res.intersect(rfa)
+            tc = intersection.transitive_closure_sq()
+            if tc.nvals == prev:
+                changing = False
+        return res.labels_adj[grammar.start_symbol]
